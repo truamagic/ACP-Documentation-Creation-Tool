@@ -65,6 +65,18 @@
   .brand .t2{font-size:11.5px;color:var(--ink-soft)}
   .header-actions{margin-left:auto;display:flex;gap:9px;flex-wrap:wrap}
 
+  /* ---------- Role switch (医師/看護師) ---------- */
+  .role-switch{display:inline-flex;background:#eef3e8;border-radius:999px;padding:4px;gap:2px}
+  .role-btn{border:none;background:transparent;padding:8px 15px;border-radius:999px;font-size:13px;font-weight:700;
+    color:var(--ink-soft);font-family:var(--sans);cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px}
+  .role-btn:hover{color:var(--ink)}
+  .role-btn.active{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+  .role-btn.active[data-role="doctor"]{color:var(--leaf-deep)}
+  .role-btn.active[data-role="nurse"]{color:#a67722}
+  .role-tag{font-size:11px;font-weight:700;padding:1px 8px;border-radius:6px;margin-left:8px;vertical-align:1px;white-space:nowrap}
+  .role-tag.doctor{background:#eef7ea;color:#2f6d3c;border:1px solid var(--leaf)}
+  .role-tag.nurse{background:#fdf6e8;color:#a67722;border:1px solid var(--gold)}
+
   button{font-family:var(--sans);cursor:pointer}
   .btn{
     border:1px solid var(--line);background:#fff;color:var(--ink);
@@ -110,6 +122,10 @@
   @media (max-width:560px){.grid.c2,.grid.c3{grid-template-columns:1fr}}
   .field{display:flex;flex-direction:column;gap:5px}
   .field > label{font-size:13px;font-weight:600;color:var(--ink-soft)}
+  .btn-now{border:1px solid var(--leaf);background:#fff;color:var(--leaf-deep);
+    font-family:var(--sans);font-size:11px;font-weight:700;padding:1px 9px;border-radius:999px;
+    margin-left:8px;cursor:pointer;transition:.12s;vertical-align:1px}
+  .btn-now:hover{background:var(--leaf-deep);color:#fff}
   .field .req{color:var(--coral);font-weight:700;margin-left:3px}
   input[type=text],input[type=date],input[type=time],input[type=number],select,textarea{
     font-family:var(--sans);font-size:14px;color:var(--ink);
@@ -252,6 +268,10 @@
         <span class="t2">院内限定・外部通信なし・入力内容は保存されません</span>
       </div>
     </div>
+    <div class="role-switch no-print" role="group" aria-label="職種切替">
+      <button type="button" class="role-btn active" id="roleDoctor" data-role="doctor">🩺 医師モード</button>
+      <button type="button" class="role-btn" id="roleNurse" data-role="nurse">👩‍⚕️ 看護師モード</button>
+    </div>
     <div class="header-actions">
       <button class="btn" id="btnCopyKarte">📋 カルテ用テキストをコピー</button>
       <button class="btn leaf" id="btnPrint">🖨 A4説明書を印刷 / PDF保存</button>
@@ -269,12 +289,16 @@
       <h2><span class="num">基本情報</span> 患者・説明の基本情報</h2>
       <div class="section-body">
         <div class="grid c3">
-          <div class="field"><label>説明日</label><input type="date" id="f_date" autocomplete="off"></div>
-          <div class="field"><label>説明時刻</label><input type="time" id="f_time" autocomplete="off"></div>
+          <div class="field">
+            <label>説明日時 <button type="button" class="btn-now" id="btnNow">今すぐ</button></label>
+            <div style="display:flex;gap:8px">
+              <input type="date" id="f_date" autocomplete="off" style="flex:1">
+              <input type="time" id="f_time" autocomplete="off" style="flex:0 0 110px">
+            </div>
+          </div>
           <div class="field"><label>説明場所</label><input type="text" id="f_place" placeholder="例：面談室 / 病棟" autocomplete="off"></div>
           <div class="field"><label>診療科・部署</label><input type="text" id="f_dept" autocomplete="off"></div>
           <div class="field"><label>説明者</label><input type="text" id="f_explainer" autocomplete="off"></div>
-          <div class="field"><label>作成者</label><input type="text" id="f_author" autocomplete="off"></div>
           <div class="field"><label>患者氏名</label><input type="text" id="f_pname" autocomplete="off"></div>
           <div class="field"><label>患者ID</label><input type="text" id="f_pid" autocomplete="off"></div>
           <div class="field"><label>生年月日</label><input type="date" id="f_dob" autocomplete="off"></div>
@@ -285,32 +309,32 @@
       </div>
     </section>
 
-    <!-- 8.2 今回の説明の位置づけ -->
+    <!-- 1 今回の説明の位置づけ -->
     <section class="section">
-      <h2><span class="num">8.2</span> 今回の説明の位置づけ</h2>
+      <h2><span class="num">1</span> 今回の説明の位置づけ</h2>
       <div class="section-body">
         <div class="fieldnote">該当するものを選択してください（複数選択可）。「急変時対応の説明」「DNARに関する説明」「DNIに関する説明」を選ぶとDNAR/DNIセクションが表示されます。</div>
         <div class="opts wrap" id="grp_position"></div>
       </div>
     </section>
 
-    <!-- 9. ACP意向確認 -->
+    <!-- 2. ACP意向確認 -->
     <section class="section">
-      <h2><span class="num">9</span> ACPに関する意向確認</h2>
+      <h2><span class="num">2</span> ACPに関する意向確認</h2>
       <div class="section-body">
-        <div class="group-label">9.1 意向の主体 <span class="req">必須</span></div>
+        <div class="group-label">2-1 意向の主体 <span class="req">必須</span></div>
         <div class="opts" id="grp_acpSubject"></div>
         <div class="sub-input hidden" id="wrap_acpSubjectReason">
           <textarea id="f_acpSubjectReason" placeholder="本人の意思確認が困難である理由・状況を入力してください"></textarea>
         </div>
 
-        <div class="group-label" style="margin-top:14px">9.2 確認対象 <small>複数選択可</small></div>
+        <div class="group-label" style="margin-top:14px">2-2 確認対象 <small>複数選択可</small></div>
         <div class="opts wrap" id="grp_acpTarget"></div>
 
-        <div class="group-label" style="margin-top:14px">9.3 確認方法 <small>複数選択可</small></div>
+        <div class="group-label" style="margin-top:14px">2-3 確認方法 <small>複数選択可</small></div>
         <div class="opts wrap" id="grp_acpMethod"></div>
 
-        <div class="group-label" style="margin-top:14px">9.4 大切にしたいこと <small>複数選択可</small></div>
+        <div class="group-label" style="margin-top:14px">2-4 大切にしたいこと <small>複数選択可</small></div>
         <div class="opts wrap" id="grp_acpValues"></div>
         <div class="field hidden" id="wrap_acpValuesFree" style="margin-top:6px">
           <label>その他・具体的希望</label><textarea id="f_acpValuesFree"></textarea>
@@ -320,63 +344,118 @@
 
     <!-- 10. DNAR/DNI -->
     <section class="section care hidden" id="sec_dnar">
-      <h2><span class="num">10</span> DNAR/DNI に関する説明・意向の整理</h2>
+      <h2><span class="num">3</span> DNAR/DNI に関する説明・意向の整理</h2>
       <div class="section-body">
-        <div class="inline-note">
+        <div class="inline-note" id="dnarNote">
           このセクションは、急変時対応の<b>説明内容・理解状況・意向確認・見直し条件</b>を整理するためのものです。
           DNAR指示書・DNI指示書・医師指示・電子カルテオーダーを<b>代替しません</b>。正式な指示・登録は院内手順に従って別途行ってください。
         </div>
 
-        <!-- 10.3 -->
-        <div class="group-label" style="margin-top:10px">10.3 DNAR/DNIを扱ったか <span class="req">必須</span></div>
+        <!-- 3-1 -->
+        <div class="group-label" style="margin-top:10px">3-1 DNAR/DNIを扱ったか <span class="req">必須</span></div>
         <div class="opts" id="grp_dnarHandled"></div>
 
         <div id="dnarDetails">
-          <!-- 10.4.1 共通説明項目 -->
+          <!-- 医学的判断・適応（医師モード） -->
+          <div class="care-frame subblock care" id="block_medjudge">
+            <h3>3-2 医学的判断・適応 <small style="font-weight:500;color:#a67722">医師記入・DNAR/DNI指示書の代替ではありません</small></h3>
+            <div class="grid c2">
+              <div class="field"><label>主病名・診断</label><input type="text" id="f_diagnosis" placeholder="例：慢性心不全 急性増悪" autocomplete="off"></div>
+              <div class="field"><label>医学的な予後の見立て</label>
+                <select id="f_prognosis">
+                  <option value="">選択してください</option>
+                  <option>数日以内</option>
+                  <option>数週間程度</option>
+                  <option>数か月程度</option>
+                  <option>年単位</option>
+                  <option>予測困難</option>
+                </select>
+              </div>
+            </div>
+            <div class="field" style="margin-top:10px">
+              <label>医学的適応の判断・治療方針の医学的妥当性</label>
+              <textarea id="f_medJudgeNote" placeholder="例：現病状に対する心肺蘇生の医学的有効性は限定的であり、多職種で継続検討する方針とした"></textarea>
+            </div>
+            <div class="field" style="margin-top:10px">
+              <label>判断医師名 <small style="font-weight:500;color:var(--ink-soft)">（説明者と異なる場合に記入）</small></label>
+              <input type="text" id="f_judgeDoctor" placeholder="例：循環器内科 田中医師" autocomplete="off">
+            </div>
+          </div>
+
+          <!-- 3-3 共通説明項目 -->
           <div class="care-frame subblock care" id="block_common">
-            <h3>10.4.1 共通説明項目 <small style="font-weight:500;color:#a67722">★＝意向を出力する前に必須</small></h3>
+            <h3>3-3 共通説明項目 <small style="font-weight:500;color:#a67722">★＝「希望しない」意向を出力する前に必須</small></h3>
             <div class="opts" id="grp_commonExplain"></div>
           </div>
 
-          <!-- 10.4.2 DNAR固有 + 10.5 意向 -->
+          <!-- 3-4 DNAR固有 + 3-5 意向 -->
           <div class="care-frame subblock care" id="block_dnar">
             <h3>DNAR（心肺蘇生）に関する説明・意向</h3>
-            <div class="group-label">10.4.2 DNAR固有説明項目 <small>意向を「希望する／希望しない」で出力する場合は全項目必須</small></div>
+            <div class="group-label">3-4 DNAR固有説明項目 <small>「希望しない」で出力する場合は全項目必須</small></div>
             <div class="opts" id="grp_dnarExplain"></div>
-            <div class="group-label" style="margin-top:12px">10.5 心肺蘇生に関する意向 <small>単一選択</small></div>
+            <div class="group-label" style="margin-top:12px">3-5 心肺蘇生に関する意向 <small>単一選択</small></div>
             <div class="opts" id="grp_dnarIntent"></div>
           </div>
 
-          <!-- 10.4.3 DNI固有 + 10.6 意向 -->
+          <!-- 3-6 DNI固有 + 3-7 意向 -->
           <div class="care-frame subblock care" id="block_dni">
             <h3>DNI（人工呼吸器管理）に関する説明・意向</h3>
-            <div class="group-label">10.4.3 DNI固有説明項目 <small>意向を「希望する／希望しない」で出力する場合は全項目必須</small></div>
+            <div class="group-label">3-6 DNI固有説明項目 <small>「希望しない」で出力する場合は全項目必須</small></div>
             <div class="opts" id="grp_dniExplain"></div>
-            <div class="group-label" style="margin-top:12px">10.6 人工呼吸器管理に関する意向 <small>単一選択・DNARとは別に確認</small></div>
+            <div class="group-label" style="margin-top:12px">3-7 人工呼吸器管理に関する意向 <small>単一選択・DNARとは別に確認</small></div>
             <div class="opts" id="grp_dniIntent"></div>
           </div>
 
-          <!-- 10.7 継続ケア -->
-          <div class="subblock" id="block_continue">
-            <h3>10.7 DNAR/DNIにかかわらず継続する医療・ケア <small style="font-weight:500;color:#586154">複数選択可</small></h3>
-            <div class="opts wrap" id="grp_continueCare"></div>
+          <!-- 意向確認日（「希望しない」時に併記） -->
+          <div class="care-frame subblock care hidden" id="block_intentDate">
+            <h3>意向の確認日 <small style="font-weight:500;color:#a67722">「希望しない」の意向を記録する際に併記</small></h3>
+            <div class="field" style="max-width:320px">
+              <label>この意向を確認した日 <span class="req">必須</span></label>
+              <input type="date" id="f_intentConfirmDate" autocomplete="off">
+            </div>
           </div>
 
-          <!-- 10.8 意向の主体 -->
+          <!-- 3-8 継続ケア -->
+          <div class="subblock" id="block_continue">
+            <h3>3-8 DNAR/DNIにかかわらず継続する医療・ケア <small style="font-weight:500;color:#586154">複数選択可</small><span class="role-tag nurse hidden" id="tagContinue">👩‍⚕️ 看護師フォーカス</span></h3>
+            <div class="opts wrap" id="grp_continueCare"></div>
+            <div class="field" style="margin-top:8px">
+              <label>継続ケアの具体的内容・留意点</label>
+              <textarea id="f_continueCareDetail" placeholder="例：疼痛時はレスキュー使用、体位変換2時間毎、家族面会は制限なし"></textarea>
+            </div>
+          </div>
+
+          <!-- 3-9 意向の主体 -->
           <div class="subblock" id="block_subject">
-            <h3>10.8 意向の主体 <span class="req" style="font-size:12px">必須</span></h3>
+            <h3>3-9 意向の主体 <span class="req" style="font-size:12px">必須</span></h3>
             <div class="opts" id="grp_dnarSubject"></div>
           </div>
 
-          <!-- 10.9 理解状況 -->
+          <!-- 3-10 理解状況 -->
           <div class="subblock" id="block_understanding">
-            <h3>10.9 理解状況・意思表明 <small style="font-weight:500;color:#586154">単一選択</small></h3>
+            <h3>3-10 理解状況・意思表明 <small style="font-weight:500;color:#586154">単一選択</small><span class="role-tag nurse hidden" id="tagUnderstanding">👩‍⚕️ 看護師フォーカス</span></h3>
             <div class="opts" id="grp_understanding"></div>
+
+            <div class="group-label" style="margin-top:14px">本人への説明・同席の状況 <small>単一選択</small></div>
+            <div class="opts" id="grp_patientPresence"></div>
+
+            <div id="nurseCareBlock" class="hidden" style="margin-top:14px">
+              <div class="group-label">本人・家族等の反応・様子 <small>複数選択可・看護師記録</small></div>
+              <div class="opts wrap" id="grp_reactionPatient"></div>
+              <div class="field" style="margin-top:8px">
+                <label>提供した心理的支援・声かけの内容</label>
+                <textarea id="f_psychSupport" placeholder="例：本人の不安な気持ちに寄り添い、いつでも質問できることを伝えた"></textarea>
+              </div>
+              <div class="field" style="margin-top:8px">
+                <label>今後のフォローが必要な事項</label>
+                <textarea id="f_followUpNeeds" placeholder="例：次回面談までに本人の気持ちの変化を確認する"></textarea>
+              </div>
+            </div>
           </div>
 
-          <!-- 10.10 相違・未決 -->
+          <!-- 3-11 相違・未決 -->
           <div class="subblock" id="block_disagree">
-            <h3>10.10 意見の相違・未決事項 <small style="font-weight:500;color:#586154">複数選択可</small></h3>
+            <h3>3-11 意見の相違・未決事項 <small style="font-weight:500;color:#586154">複数選択可</small></h3>
             <div class="opts wrap" id="grp_disagreement"></div>
             <div class="grid c2" style="margin-top:8px">
               <div class="field"><label>相違・未決事項の内容</label><textarea id="f_disagreeDetail"></textarea></div>
@@ -384,10 +463,30 @@
             </div>
           </div>
 
-          <!-- 10.11 見直し条件 -->
+          <!-- 3-12 見直し条件 -->
           <div class="subblock" id="block_review">
-            <h3>10.11 見直し条件 <span class="req" style="font-size:12px">必須</span></h3>
+            <h3>3-12 見直し条件 <span class="req" style="font-size:12px">必須</span></h3>
             <div class="opts wrap" id="grp_reviewCond"></div>
+          </div>
+
+          <!-- 多職種カンファレンス・情報共有 -->
+          <div class="subblock" id="block_conference">
+            <h3>3-13 多職種カンファレンス・情報共有 <span class="role-tag nurse hidden" id="tagConference">👩‍⚕️ 看護師フォーカス</span></h3>
+            <div class="fieldnote" id="conferenceNote"></div>
+            <div class="grid c2">
+              <div class="field"><label>カンファレンス実施日</label><input type="date" id="f_confDate" autocomplete="off"></div>
+              <div class="field"><label>次回カンファレンス予定</label><input type="text" id="f_nextConfDate" placeholder="例：来週の定例カンファレンスで再検討" autocomplete="off"></div>
+            </div>
+            <div class="group-label" style="margin-top:10px">参加職種 <small>複数選択可</small></div>
+            <div class="opts wrap" id="grp_confRoles"></div>
+            <div class="field" style="margin-top:8px">
+              <label>各職種からの意見・共有事項</label>
+              <textarea id="f_confSummary"></textarea>
+            </div>
+            <div class="field" style="margin-top:8px">
+              <label>情報共有先・申し送り事項</label>
+              <textarea id="f_confShare"></textarea>
+            </div>
           </div>
         </div>
       </div>
@@ -395,7 +494,7 @@
 
     <!-- 署名欄トグル -->
     <section class="section">
-      <h2><span class="num">15.3</span> 出力オプション</h2>
+      <h2><span class="num">4</span> 出力オプション</h2>
       <div class="section-body">
         <label class="opt" style="max-width:420px">
           <input type="checkbox" id="opt_sig">
@@ -481,7 +580,7 @@ const OPT = {
   dnarHandled: ["DNAR/DNIについて説明・確認した","DNARのみ説明・確認した","DNIのみ説明・確認した",
                 "急変時対応の概要のみ説明し、DNAR/DNIの意向確認までは行っていない","本日はDNAR/DNIについて扱っていない"],
   commonExplain: ["現在の病状","今後予想される経過","急変時に想定される状況","治療により期待される効果","治療の限界",
-                  "治療に伴う身体的負担","苦痛緩和を含む通常の医療・ケアは継続されること","意向は今後変更できること","病状変化時に再確認すること"],
+                  "治療に伴う身体的負担","苦痛緩和を含む通常の医療・ケアは継続されること"],
   dnarExplain: ["心停止時に行う心肺蘇生の内容","心肺蘇生により期待される効果","心肺蘇生の限界","心肺蘇生に伴う身体的負担",
                 "DNARは心停止時の心肺蘇生不開始に関する確認であること","DNARは通常の医療・看護・苦痛緩和を行わないという意味ではないこと"],
   dniExplain: ["呼吸状態悪化時に人工呼吸器管理が必要となる場合があること","人工呼吸器管理の内容","人工呼吸器管理により期待される効果",
@@ -498,10 +597,25 @@ const OPT = {
   disagreement: ["本人と家族等の意向に相違なし","本人と家族等の意向に相違あり","家族間で意向に相違あり","医療・ケアチーム内で継続検討が必要",
                  "本人の意思確認が不十分","医学的適応について継続検討が必要","倫理的検討が必要","本日は結論に至っていない"],
   reviewCond: ["病状が変化したとき","本人または家族等の意向が変化したとき","入院時","退院時","外来再診時","急変リスクが高まったとき","治療方針が変更されるとき","多職種カンファレンス後","必要時に再確認する"],
+  reactionPatient: ["落ち着いて聞かれていた","不安そうな様子があった","涙を流された","質問が多く出た","沈黙が多く見られた","医療者への信頼が確認できた","感情の表出が少なかった"],
+  confRoles: ["医師","看護師","医療ソーシャルワーカー(MSW)","薬剤師","リハビリ職","管理栄養士","地域連携室","その他"],
+  patientPresence: ["本人に説明し、本人が同席した","本人に説明したが、本人は同席できなかった","本人への説明は行わず、家族等のみに説明した","本人が説明を希望されなかった"],
 };
 
-/* 共通説明・必須7項目 / DNAR固有(全6) / DNI固有(全7) */
-const COMMON_REQUIRED = ["現在の病状","今後予想される経過","治療により期待される効果","治療の限界","治療に伴う身体的負担","苦痛緩和を含む通常の医療・ケアは継続されること","意向は今後変更できること"];
+/* ---- 職種別の文言（医師モード／看護師モード） ---- */
+const ROLE_TEXT = {
+  doctor: {
+    dnarNote: `このセクションは、<b>医師が行った病状説明・医学的判断</b>と、急変時対応の説明内容・意向確認・見直し条件を整理するためのものです。DNAR指示書・DNI指示書・電子カルテオーダーを<b>代替しません</b>。正式な指示・登録は院内手順に従って別途行ってください。`,
+    conferenceNote: `多職種カンファレンスでの検討内容・情報共有事項を記録します。`,
+  },
+  nurse: {
+    dnarNote: `このセクションは、<b>医師の説明に同席した際の理解確認・心理的ケア</b>と、意向確認・見直し条件を整理するためのものです。DNAR指示書・DNI指示書・医師指示・電子カルテオーダーを<b>代替しません</b>。医学的判断は医師が別途行います。`,
+    conferenceNote: `看護師が中心となり、多職種カンファレンスでの検討内容・情報共有事項を記録します。`,
+  },
+};
+
+/* 共通説明・必須6項目（「意向は今後変更できること」「病状変化時に再確認すること」はA4定型文へ移動） / DNAR固有(全6) / DNI固有(全7) */
+const COMMON_REQUIRED = ["現在の病状","今後予想される経過","治療により期待される効果","治療の限界","治療に伴う身体的負担","苦痛緩和を含む通常の医療・ケアは継続されること"];
 
 /* 自動文言（14.3） */
 const AUTO = {
@@ -543,8 +657,11 @@ buildGroup("grp_dniIntent",OPT.dniIntent,"radio","dniIntent","care-opt");
 buildGroup("grp_continueCare",OPT.continueCare,"checkbox");
 buildGroup("grp_dnarSubject",OPT.dnarSubject,"radio","dnarSubject");
 buildGroup("grp_understanding",OPT.understanding,"radio","understanding");
+buildGroup("grp_patientPresence",OPT.patientPresence,"radio","patientPresence");
 buildGroup("grp_disagreement",OPT.disagreement,"checkbox");
 buildGroup("grp_reviewCond",OPT.reviewCond,"checkbox");
+buildGroup("grp_reactionPatient",OPT.reactionPatient,"checkbox");
+buildGroup("grp_confRoles",OPT.confRoles,"checkbox");
 
 /* ---- 年齢自動計算（説明日・生年月日より） ---- */
 function calcAge(dobStr, baseStr){
@@ -559,6 +676,17 @@ function calcAge(dobStr, baseStr){
   return age>=0 ? age+"歳" : "";
 }
 function recalcAge(){ $("f_age").value=calcAge($("f_dob").value,$("f_date").value); }
+
+/* ---- 「今すぐ」ボタン：現在日時をワンタップで入力 ---- */
+function setNow(){
+  const n=new Date();
+  const p=x=>String(x).padStart(2,"0");
+  $("f_date").value=`${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())}`;
+  $("f_time").value=`${p(n.getHours())}:${p(n.getMinutes())}`;
+  recalcAge();
+  onChange();
+}
+$("btnNow").addEventListener("click",setNow);
 
 /* ---- 自由入力欄・チェックボックス単体項目のライブ反映配線 ----
    buildGroup() で生成した選択肢は個別に change リスナーを持つが、
@@ -576,6 +704,7 @@ function wireLiveInputs(){
       }
     });
   $("opt_sig").addEventListener("change",onChange);
+  $("f_prognosis").addEventListener("change",onChange);
 }
 wireLiveInputs();
 
@@ -613,21 +742,21 @@ function onChange(){
 }
 
 function applyVisibility(){
-  // 9.4 排他：「今回は確認していない」
+  // 2-4 排他：「今回は確認していない」
   enforceExclusive("grp_acpValues",["今回は確認していない"]);
 
-  // 9.1 推定意思→理由入力
+  // 2-1 推定意思→理由入力
   const acpSub=getRadio("acpSubject");
   $("wrap_acpSubjectReason").classList.toggle("hidden", acpSub!=="本人の推定意思");
-  // 9.4 その他自由欄：具体的希望が選ばれていれば表示
+  // 2-4 その他自由欄：具体的希望が選ばれていれば表示
   $("wrap_acpValuesFree").classList.remove("hidden");
 
-  // DNAR/DNIセクション表示条件（8.2）
+  // DNAR/DNIセクション表示条件（セクション1）
   const pos=getChecks("grp_position");
   const showDnar = pos.includes("急変時対応の説明")||pos.includes("DNARに関する説明")||pos.includes("DNIに関する説明");
   $("sec_dnar").classList.toggle("hidden",!showDnar);
 
-  // 10.3 に応じたサブブロック表示
+  // 3-1 に応じたサブブロック表示
   const handled=getRadio("dnarHandled");
   const details=$("dnarDetails");
   const noneToday = handled==="本日はDNAR/DNIについて扱っていない";
@@ -642,17 +771,21 @@ function applyVisibility(){
     $("block_dnar").classList.toggle("hidden", overviewOnly || dniOnly);
     $("block_dni").classList.toggle("hidden", overviewOnly || dnarOnly);
     $("block_continue").classList.toggle("hidden", overviewOnly);
-    // 意向欄（10.5/10.6）を概要のみでは隠す
+    // 意向欄（3-5/3-7）を概要のみでは隠す
     $("grp_dnarIntent").classList.toggle("hidden", overviewOnly);
     $("grp_dniIntent").classList.toggle("hidden", overviewOnly);
   }
+
+  // ① 意向確認日ブロック：「希望しない」を選んだときのみ表示
+  const declineSelected = getRadio("dnarIntent")==="心肺蘇生を希望しない" || getRadio("dniIntent")==="人工呼吸器管理を希望しない";
+  $("block_intentDate").classList.toggle("hidden", !declineSelected);
 }
 
 /* ============ 収集 ============ */
 function collect(){
   return {
     date:$("f_date").value, time:$("f_time").value, place:$("f_place").value,
-    dept:$("f_dept").value, explainer:$("f_explainer").value, author:$("f_author").value,
+    dept:$("f_dept").value, explainer:$("f_explainer").value,
     pname:$("f_pname").value, pid:$("f_pid").value, dob:$("f_dob").value, age:$("f_age").value,
     receiver:$("f_receiver").value, attendees:$("f_attendees").value,
     position:getChecks("grp_position"),
@@ -668,6 +801,14 @@ function collect(){
     disagreement:getChecks("grp_disagreement"), disagreeDetail:$("f_disagreeDetail").value, disagreePlan:$("f_disagreePlan").value,
     reviewCond:getChecks("grp_reviewCond"),
     sig:$("opt_sig").checked,
+    diagnosis:$("f_diagnosis").value, prognosis:$("f_prognosis").value, medJudgeNote:$("f_medJudgeNote").value,
+    judgeDoctor:$("f_judgeDoctor").value,
+    intentConfirmDate:$("f_intentConfirmDate").value,
+    patientPresence:getRadio("patientPresence"),
+    reactionPatient:getChecks("grp_reactionPatient"), psychSupport:$("f_psychSupport").value, followUpNeeds:$("f_followUpNeeds").value,
+    continueCareDetail:$("f_continueCareDetail").value,
+    confDate:$("f_confDate").value, confRoles:getChecks("grp_confRoles"), confSummary:$("f_confSummary").value,
+    confShare:$("f_confShare").value, nextConfDate:$("f_nextConfDate").value,
   };
 }
 
@@ -692,46 +833,54 @@ function validate(d){
   const dnarOut = isIntentOutput(d.dnarIntent);
   const dniOut = isIntentOutput(d.dniIntent);
 
-  // 9.1 必須
-  if(!d.acpSubject) warns.push("【ACP 9.1】意向の主体が未選択です。");
+  // 2-1 必須
+  if(!d.acpSubject) warns.push("【ACP 2-1】意向の主体が未選択です。");
   if(d.acpSubject==="本人の推定意思" && !d.acpSubjectReason.trim())
-    warns.push("【ACP 9.1】「本人の推定意思」を選択した場合は、本人の意思確認が困難な理由・状況を入力してください。");
-  // 9.4 「現時点では決められない」＋具体的希望
+    warns.push("【ACP 2-1】「本人の推定意思」を選択した場合は、本人の意思確認が困難な理由・状況を入力してください。");
+  // 2-4 「現時点では決められない」＋具体的希望
   const concreteValues=OPT.acpValues.filter(v=>v!=="現時点では決められない"&&v!=="今回は確認していない");
   if(d.acpValues.includes("現時点では決められない") && d.acpValues.some(v=>concreteValues.includes(v)))
-    warns.push("【ACP 9.4】「現時点では決められない」と具体的な希望が同時に選択されています。整合を確認してください。");
+    warns.push("【ACP 2-4】「現時点では決められない」と具体的な希望が同時に選択されています。整合を確認してください。");
 
   if(m.active){
-    if(!d.dnarHandled) warns.push("【DNAR/DNI 10.3】「DNAR/DNIを扱ったか」が未選択です。");
+    if(!d.dnarHandled) warns.push("【DNAR/DNI 3-1】「DNAR/DNIを扱ったか」が未選択です。");
 
-    // 意向を出力する場合の共通必須（10.4.1 / 14.1）
-    if(dnarOut||dniOut){
+    // 「希望しない」意向は、説明項目の確認を必須ガードとする（差し控え方向の意思決定のため）
+    const dnarDecline = d.dnarIntent==="心肺蘇生を希望しない";
+    const dniDecline  = d.dniIntent==="人工呼吸器管理を希望しない";
+
+    // 共通説明項目：いずれかが「希望しない」の場合に必須（3-3）
+    if(dnarDecline||dniDecline){
       const missCommon=COMMON_REQUIRED.filter(v=>!d.commonExplain.includes(v));
       if(missCommon.length)
-        blocks.push("【必須 10.4.1】DNAR/DNIの意向を出力するには、病状・効果・限界・負担・通常の医療/ケアの継続・意向変更の可否などの説明済み確認が必要です（未確認："+missCommon.join("、")+"）。");
+        blocks.push("【必須 3-3】「希望しない」の意向を出力するには、病状・経過・効果・限界・身体的負担・通常の医療/ケアの継続などの説明済み確認が必要です（未確認："+missCommon.join("、")+"）。");
     }
-    // DNAR固有（10.4.2）意向出力時 全必須
-    if(dnarOut){
+    // DNAR固有（3-4）：DNAR「希望しない」時 全必須
+    if(dnarDecline){
       const miss=OPT.dnarExplain.filter(v=>!d.dnarExplain.includes(v));
-      if(miss.length) blocks.push("【必須 10.4.2】DNARの意向を出力するには、DNAR固有説明項目の全チェックが必要です（未確認："+miss.join("、")+"）。");
+      if(miss.length) blocks.push("【必須 3-4】DNARの「希望しない」意向を出力するには、DNAR固有説明項目の全チェックが必要です（未確認："+miss.join("、")+"）。");
     }
-    // DNI固有（10.4.3）
-    if(dniOut){
+    // DNI固有（3-6）：DNI「希望しない」時 全必須
+    if(dniDecline){
       const miss=OPT.dniExplain.filter(v=>!d.dniExplain.includes(v));
-      if(miss.length) blocks.push("【必須 10.4.3】DNIの意向を出力するには、DNI固有説明項目の全チェックが必要です（未確認："+miss.join("、")+"）。");
+      if(miss.length) blocks.push("【必須 3-6】DNIの「希望しない」意向を出力するには、DNI固有説明項目の全チェックが必要です（未確認："+miss.join("、")+"）。");
     }
-    // 10.7 継続ケア：希望しない時 必須
-    if((d.dnarIntent==="心肺蘇生を希望しない"||d.dniIntent==="人工呼吸器管理を希望しない") && d.continueCare.length===0)
-      warns.push("【DNAR/DNI 10.7】「希望しない」が選択されています。DNAR/DNIにかかわらず継続する医療・ケアを選択してください。");
+    // 3-8 継続ケア：希望しない時 必須
+    if((dnarDecline||dniDecline) && d.continueCare.length===0)
+      warns.push("【DNAR/DNI 3-8】「希望しない」が選択されています。DNAR/DNIにかかわらず継続する医療・ケアを選択してください。");
 
-    // 意向の主体（10.8）
-    if((dnarOut||dniOut) && !d.dnarSubject) warns.push("【DNAR/DNI 10.8】意向が選択されていますが、意向の主体が未選択です。");
+    // ① 「希望しない」意向の確認日 推奨
+    if((dnarDecline||dniDecline) && !d.intentConfirmDate)
+      warns.push("【DNAR/DNI】「希望しない」の意向を出力する場合は、意向の確認日を記録してください。");
+
+    // 意向の主体（3-9）
+    if((dnarOut||dniOut) && !d.dnarSubject) warns.push("【DNAR/DNI 3-9】意向が選択されていますが、意向の主体が未選択です。");
     if(d.dnarSubject==="本人の推定意思" && !d.acpSubjectReason.trim())
-      warns.push("【DNAR/DNI 10.8】「本人の推定意思」の場合、本人の意思確認が困難である状況の記載を確認してください（ACP 9.1欄に入力）。");
+      warns.push("【DNAR/DNI 3-9】「本人の推定意思」の場合、本人の意思確認が困難である状況の記載を確認してください（2-1欄に入力）。");
 
     // 家族等の意向 × 本人が自ら表明（整合）
     if(d.dnarSubject==="家族等の意向" && (d.understanding==="本人が説明内容を理解し、自ら意思を表明した"||d.understanding==="本人は支援を受けながら意思を表明した"))
-      warns.push("【DNAR/DNI 10.9】主体が「家族等の意向」ですが、理解状況が本人の意思表明になっています。本人の意向として誤記録されないよう確認してください。");
+      warns.push("【DNAR/DNI 3-10】主体が「家族等の意向」ですが、理解状況が本人の意思表明になっています。本人の意向として誤記録されないよう確認してください。");
 
     // 意向確認まで至っていない × 具体的意向
     if(d.dnarSubject==="今回は意向確認まで至っていない" && (isIntentOutput(d.dnarIntent)||isIntentOutput(d.dniIntent)))
@@ -743,19 +892,25 @@ function validate(d){
       if(dniOut && !d.dnarIntent) warns.push("【DNAR/DNI】DNIの意向が入力済みですが、DNARの意向が未回答です。DNAR/DNIは別項目として確認してください。");
     }
 
+    // 医学的適応で継続検討の場合、判断根拠の記載を推奨
+    if((d.dnarIntent==="医学的適応を含めて医療・ケアチームで継続検討する"||d.dniIntent==="医学的適応を含めて医療・ケアチームで継続検討する") && !d.medJudgeNote.trim())
+      warns.push("【医学的判断 3-2】「医学的適応を含めて継続検討する」が選択されています。医学的判断の根拠を3-2欄に記載すると記録が明確になります。");
+
     // 相違あり／未決 → 今後の対応
     const needsPlan=d.disagreement.some(v=>["本人と家族等の意向に相違あり","家族間で意向に相違あり","医療・ケアチーム内で継続検討が必要","医学的適応について継続検討が必要","倫理的検討が必要","本人の意思確認が不十分","本日は結論に至っていない"].includes(v));
     if(needsPlan && !d.disagreePlan.trim() && !d.disagreeDetail.trim())
-      warns.push("【DNAR/DNI 10.10】相違・未決事項が選択されています。内容または今後の調整方針を入力してください。");
+      warns.push("【DNAR/DNI 3-11】相違・未決事項が選択されています。内容または今後の調整方針を入力してください。");
 
-    // 10.11 見直し条件 必須
+    // 3-12 見直し条件 必須
     if(!m.noneToday && d.reviewCond.length===0)
-      blocks.push("【必須 10.11】DNAR/DNIに関する内容は、病状や本人・家族等の意向に応じて見直す必要があります。見直し条件を選択してください。");
+      blocks.push("【必須 3-12】DNAR/DNIに関する内容は、病状や本人・家族等の意向に応じて見直す必要があります。見直し条件を選択してください。");
   }
 
-  // 出力可否
-  const canDnar = dnarOut && !blocks.some(b=>b.includes("10.4"));
-  const canDni  = dniOut  && !blocks.some(b=>b.includes("10.4"));
+  // 出力可否：DNAR/DNIそれぞれ、自分に関わる必須ブロックが無ければ出力可
+  const dnarBlocked = blocks.some(b=>b.includes("必須 3-3")||b.includes("必須 3-4"));
+  const dniBlocked  = blocks.some(b=>b.includes("必須 3-3")||b.includes("必須 3-6"));
+  const canDnar = dnarOut && !dnarBlocked;
+  const canDni  = dniOut  && !dniBlocked;
   return {blocks,warns,canDnar,canDni,dnarOut,dniOut};
 }
 
@@ -812,18 +967,19 @@ function renderA4(d,val){
       if((m.both||m.dnarOnly)){
         care+=`<p>心停止時の心肺蘇生について、内容・期待される効果・限界・身体的負担についてご説明しました。</p>`;
         if(val.canDnar) care+=`<p><b>心肺蘇生について：</b>${esc(intentLabel(d.dnarIntent))}</p>`;
-        else if(d.dnarIntent) care+=`<p class="empty-hint">（心肺蘇生に関する意向は、必須説明項目の確認後に出力されます）</p>`;
+        else if(d.dnarIntent) care+=`<p class="empty-hint">（「希望しない」の意向は、必須説明項目の確認後に出力されます）</p>`;
       }
       // DNI
       if((m.both||m.dniOnly)){
         care+=`<p>呼吸状態が悪化した場合の人工呼吸器管理について、内容・期待される効果・限界・身体的負担についてご説明しました。</p>`;
         if(val.canDni) care+=`<p><b>人工呼吸器管理について：</b>${esc(intentLabel(d.dniIntent))}</p>`;
-        else if(d.dniIntent) care+=`<p class="empty-hint">（人工呼吸器管理に関する意向は、必須説明項目の確認後に出力されます）</p>`;
+        else if(d.dniIntent) care+=`<p class="empty-hint">（「希望しない」の意向は、必須説明項目の確認後に出力されます）</p>`;
       }
     }else{
       care+=`<p>本日は急変時対応の概要についてご説明しました。DNAR/DNIに関する具体的なご意向の確認までは行っていません。</p>`;
     }
     if(d.dnarSubject) care+=`<p><b>意向の主体：</b>${esc(d.dnarSubject)}</p>`;
+    if((val.canDnar||val.canDni) && d.intentConfirmDate) care+=`<p><b>意向を確認した日：</b>${esc(fmtDate(d.intentConfirmDate))}</p>`;
     if(d.understanding) care+=`<p><b>理解状況・意思表明：</b>${esc(d.understanding)}</p>`;
 
     // 主体別注記（14.3 自動文言）
@@ -849,6 +1005,8 @@ function renderA4(d,val){
     }
     // 見直し条件
     if(d.reviewCond.length) care+=`<p style="margin-top:8px"><b>見直しのタイミング：</b>${esc(d.reviewCond.join("、"))}</p>`;
+    // 固定記載（B：チェック項目から格上げした定型文）
+    care+=`<p style="margin-top:8px">ここで確認したご意向は、いつでも変更することができます。また、病状に変化があった場合には、あらためてご説明・ご確認いたします。</p>`;
     care+=`</div>`;
   }
 
@@ -926,13 +1084,45 @@ function renderKarte(d,val){
       if(d.dnarSubject) L.push("・意向の主体："+d.dnarSubject);
       if(d.dnarSubject==="家族等の意向") L.push("　※本人の意思ではなく、家族等から示された希望。本人の意向とは区別して記録する。");
       if(d.dnarSubject==="本人の推定意思") L.push("　※家族等から、本人が以前示していた考えや価値観を踏まえた推定意思として確認した。");
+      if((val.canDnar||val.canDni) && d.intentConfirmDate) L.push("・意向を確認した日："+fmtDate(d.intentConfirmDate));
       if(d.understanding) L.push("・理解状況・意思表明："+d.understanding);
+      if(d.patientPresence) L.push("・本人への説明・同席の状況："+d.patientPresence);
       if(d.continueCare.length) L.push("・DNAR/DNIにかかわらず継続する医療・ケア："+d.continueCare.join("、"));
       const outDis=d.disagreement.filter(v=>v!=="本人と家族等の意向に相違なし");
       if(outDis.length) L.push("・今後の検討事項："+outDis.join("、"));
       if(d.disagreeDetail) L.push("　内容："+d.disagreeDetail);
       if(d.disagreePlan) L.push("・今後の対応："+d.disagreePlan);
       if(d.reviewCond.length) L.push("・見直し条件："+d.reviewCond.join("、"));
+      L.push("・本意向はいつでも変更可能であること、病状変化時に再確認することを説明した。");
+
+      // 医学的判断・適応（医師モード記入）
+      if(d.diagnosis||d.prognosis||d.medJudgeNote||d.judgeDoctor){
+        L.push(""); L.push("＜医学的判断・適応（医師記入）＞");
+        if(d.diagnosis) L.push("・主病名／診断："+d.diagnosis);
+        if(d.prognosis) L.push("・医学的な予後の見立て："+d.prognosis);
+        if(d.medJudgeNote) L.push("・医学的適応の判断／治療方針の妥当性："+d.medJudgeNote);
+        if(d.judgeDoctor) L.push("・判断医師："+d.judgeDoctor);
+      }
+      // 理解確認・心理的ケア（看護師モード記入）
+      if(d.reactionPatient.length||d.psychSupport||d.followUpNeeds){
+        L.push(""); L.push("＜理解確認・心理的ケア（看護師記録）＞");
+        if(d.reactionPatient.length) L.push("・本人・家族等の反応：" +d.reactionPatient.join("、"));
+        if(d.psychSupport) L.push("・提供した心理的支援："+d.psychSupport);
+        if(d.followUpNeeds) L.push("・今後のフォロー事項："+d.followUpNeeds);
+      }
+      // 継続ケアの具体的内容
+      if(d.continueCareDetail){
+        L.push(""); L.push("＜継続ケアの具体的内容＞"); L.push(d.continueCareDetail);
+      }
+      // 多職種カンファレンス・情報共有
+      if(d.confDate||d.confRoles.length||d.confSummary||d.confShare||d.nextConfDate){
+        L.push(""); L.push("＜多職種カンファレンス・情報共有＞");
+        if(d.confDate) L.push("・実施日："+fmtDate(d.confDate));
+        if(d.confRoles.length) L.push("・参加職種："+d.confRoles.join("、"));
+        if(d.confSummary) L.push("・各職種からの意見："+d.confSummary);
+        if(d.confShare) L.push("・情報共有先／申し送り："+d.confShare);
+        if(d.nextConfDate) L.push("・次回カンファレンス予定："+d.nextConfDate);
+      }
     }
     L.push("");
   }
@@ -953,13 +1143,15 @@ function renderAlerts(val){
 
 /* ============ ハイライト（必須未チェック） ============ */
 function highlightRequired(d,val){
-  const dnarOut=isIntentOutput(d.dnarIntent), dniOut=isIntentOutput(d.dniIntent);
-  const commonReq = (dnarOut||dniOut) ? new Set(COMMON_REQUIRED) : null;
+  const dnarDecline = d.dnarIntent==="心肺蘇生を希望しない";
+  const dniDecline  = d.dniIntent==="人工呼吸器管理を希望しない";
+  const commonReq = (dnarDecline||dniDecline) ? new Set(COMMON_REQUIRED) : null;
   setOptState("grp_commonExplain",commonReq);
-  setOptState("grp_dnarExplain", dnarOut? new Set(OPT.dnarExplain):null);
-  setOptState("grp_dniExplain", dniOut? new Set(OPT.dniExplain):null);
+  setOptState("grp_dnarExplain", dnarDecline? new Set(OPT.dnarExplain):null);
+  setOptState("grp_dniExplain", dniDecline? new Set(OPT.dniExplain):null);
   ["grp_position","grp_acpTarget","grp_acpMethod","grp_acpValues","grp_continueCare","grp_disagreement","grp_reviewCond",
-   "grp_acpSubject","grp_dnarHandled","grp_dnarIntent","grp_dniIntent","grp_dnarSubject","grp_understanding"]
+   "grp_acpSubject","grp_dnarHandled","grp_dnarIntent","grp_dniIntent","grp_dnarSubject","grp_understanding",
+   "grp_reactionPatient","grp_confRoles"]
    .forEach(g=>setOptState(g,null));
 }
 
@@ -1058,10 +1250,31 @@ $("btnReset").addEventListener("click",()=>{
 });
 function doReset(){
   document.querySelectorAll("input[type=text],input[type=date],input[type=time],input[type=number],textarea").forEach(el=>el.value="");
+  document.querySelectorAll("select").forEach(el=>el.value="");
   document.querySelectorAll("input[type=checkbox],input[type=radio]").forEach(el=>el.checked=false);
   recalcAge();
   applyVisibility(); refresh();
 }
+
+/* ============ 職種切替（医師モード／看護師モード） ============ */
+let currentRole = "doctor";
+function setRole(role){
+  currentRole = role;
+  $("roleDoctor").classList.toggle("active", role==="doctor");
+  $("roleNurse").classList.toggle("active", role==="nurse");
+  $("block_medjudge").classList.toggle("hidden", role!=="doctor");
+  $("nurseCareBlock").classList.toggle("hidden", role!=="nurse");
+  $("tagUnderstanding").classList.toggle("hidden", role!=="nurse");
+  $("tagContinue").classList.toggle("hidden", role!=="nurse");
+  $("tagConference").classList.toggle("hidden", role!=="nurse");
+  $("dnarNote").innerHTML = ROLE_TEXT[role].dnarNote;
+  $("conferenceNote").textContent = ROLE_TEXT[role].conferenceNote;
+  document.body.classList.toggle("role-doctor", role==="doctor");
+  document.body.classList.toggle("role-nurse", role==="nurse");
+  refresh();
+}
+$("roleDoctor").addEventListener("click",()=>setRole("doctor"));
+$("roleNurse").addEventListener("click",()=>setRole("nurse"));
 
 /* ============ トースト ============ */
 let toastTimer;
@@ -1085,6 +1298,7 @@ $("idleClear").addEventListener("click",()=>{ doReset(); $("idleNotice").classLi
 
 /* ============ 初期化 ============ */
 recalcAge();
+setRole("doctor");
 applyVisibility();
 refresh();
 resetIdle();
